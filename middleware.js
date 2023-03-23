@@ -9,7 +9,6 @@ const storage = new GridFsStorage({
   url: process.env.DB_URL,
   options: { useNewUrlParser: true, useUnifiedTopology: true },
   file: async (req, file) => {
-    console.log(file);
     const uuid = crypto.randomUUID();
     return {
       bucketName: "imagesBucket",

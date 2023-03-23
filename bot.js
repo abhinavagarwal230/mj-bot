@@ -1,7 +1,6 @@
 import { Client } from "discord.js-selfbot-v13";
 import dotenv from "dotenv";
 import fetch from "node-fetch";
-import crypto from "crypto";
 import mongodb, { MongoClient } from "mongodb";
 
 dotenv.config();
@@ -29,8 +28,6 @@ client.on("messageCreate", async (message) => {
   console.log(messageQueue);
   let uuid, match;
   try {
-    // let  =
-    //   /([a-f0-9]{8}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{12})/;
     const regex =
       /([a-f0-9]{8}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{12})(?=[^\w-]|$)/i; // UUID pattern
     uuid = message_content.match(regex)[0];
@@ -48,7 +45,7 @@ client.on("messageCreate", async (message) => {
     return;
   }
 
-  if (uuid === messageQueue[0]) {
+  if (messageQueue.includes(uuid)) {
     const attachment = message.attachments.first();
     console.log(attachment.url);
     try {
@@ -57,7 +54,7 @@ client.on("messageCreate", async (message) => {
         return;
       }
       const client = await MongoClient.connect(process.env.DB_URL);
-      const database = client.db("mydb");
+      const database = client.db("mydatabase");
       const bucket = new mongodb.GridFSBucket(database, {
         bucketName: "imagesBucket",
       });
@@ -73,12 +70,12 @@ client.on("messageCreate", async (message) => {
   } else {
     console.log("uuid not found in queue");
   }
-  messageQueue.shift();
+  messageQueue.splice(messageQueue.indexOf(uuid), 1);
 });
 export const sendMessage = async (message, uuid) => {
   const channel = await client.channels.fetch(process.env.CHANNEL_ID);
   try {
-    await channel.sendSlash("936929561302675456", "imagine", message);
+    await channel.sendSlash(process.env.BOT_ID, "imagine", message);
     messageQueue.push(uuid);
     console.log(messageQueue);
     console.log("slash sent");

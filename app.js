@@ -8,7 +8,7 @@ import cors from "cors";
 import crypto from "crypto";
 dotenv.config();
 
-const app = express();
+const app = express()
 
 const corsOptions = {
   origin: "*",
@@ -20,8 +20,10 @@ app.listen(process.env.PORT, () => {
   console.log(`listening on http://localhost:${process.env.PORT}`);
 });
 
+
+
 app.get("/query", async (req, res) => {
-  let { desc, chaos, preset_style, not_present } = req.query;
+  let { desc, chaos, not_present } = req.query;
   desc += " ";
   let uuid = crypto.randomUUID();
 
@@ -63,7 +65,7 @@ app.post("/upload", uploadFilesMiddleware, async (req, res) => {
 app.get("/media/:uuid", async (req, res) => {
   const uuid = req.params.uuid;
   const client = await MongoClient.connect(process.env.DB_URL);
-  const database = client.db("mydb");
+  const database = client.db("mydatabase");
   const bucket = new mongodb.GridFSBucket(database, {
     bucketName: "imagesBucket",
   });
