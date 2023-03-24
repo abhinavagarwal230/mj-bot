@@ -11,7 +11,10 @@ dotenv.config();
 const app = express()
 
 const corsOptions = {
-  origin: "*",
+	origin: ["http://localhost:3000", "https://www.vectura.io/"],
+	  methods: ["GET", "POST", "PUT", "DELETE"],
+	  allowedHeaders: ["Content-Type", "Authorization"],
+	  credentials: false
 };
 app.use(cors(corsOptions));
 app.use(express.json());
@@ -20,9 +23,13 @@ app.listen(process.env.PORT, () => {
   console.log(`listening on http://localhost:${process.env.PORT}`);
 });
 
+app.get('/', (req, res) => {
+	return res.json({"message" : "ok"});
+});
 
 
 app.get("/query", async (req, res) => {
+  console.log("query request reveived");
   let { desc, chaos, not_present } = req.query;
   desc += " ";
   let uuid = crypto.randomUUID();
@@ -36,10 +43,9 @@ app.get("/query", async (req, res) => {
     desc += ` --no ${not_present}`;
   }
 
-  let id = await sendMessage(desc, uuid);
-  if (id) {
-    return res.json({ image_path: id + ".jpg" });
-  }
+  await sendMessage(desc, uuid);
+  
+    return res.json({ image_path: uuid + ".jpg" });
 });
 
 app.post("/upload", uploadFilesMiddleware, async (req, res) => {

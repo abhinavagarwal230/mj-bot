@@ -15,8 +15,18 @@ client.on("ready", async () => {
 
 const messageQueue = [];
 
-client.on("messageCreate", async (message) => {
-
+export const sendMessage = async (message, uuid) => {
+  const channel = await client.channels.fetch(process.env.CHANNEL_ID);
+  try {
+    await channel.sendSlash(process.env.BOT_ID, "imagine", message);
+    messageQueue.push(uuid);
+    console.log(messageQueue);
+    console.log("slash sent");
+    return uuid;
+  } catch (e) {
+    console.log("failed");
+    console.log(e);
+  }
 	if (
 		!(
 			message.channelId === process.env.CHANNEL_ID &&
@@ -59,27 +69,21 @@ client.on("messageCreate", async (message) => {
 		console.log(attachment.url);
 		try {
 			const response = await fetch(attachment.url);
-			console.log("sending request to attachment url");
 			if (response.status !== 200) {
-				console.log("heere attachment url returned", response.status);
 				return;
 			}
-			console.log("received image");
-			const client = await MongoClient.connect("mongodb+srv://lamsalneeraj:hellogorl123@cluster0.4z9qnao.mongodb.net/mydatabase?retryWrites=true&w=majority");
+			const client = await MongoClient.connect(process.env.DB_URL);
 			const database = client.db("mydatabase");
 			const bucket = new mongodb.GridFSBucket(database, {
 				bucketName: "imagesBucket",
 			});
-			console.log("uploading image");
 
 			response.body.pipe(
 				bucket.openUploadStream(`${uuid}.jpg`, {
 					metadata: { uuid: uuid },
 				})
 			);
-			console.log("image upload successfull");
 		} catch (e) {
-
 			console.log("something went wrong", e);
 		}
 	} else {
@@ -88,15 +92,15 @@ client.on("messageCreate", async (message) => {
 	messageQueue.splice(messageQueue.indexOf(uuid), 1);
 });
 export const sendMessage = async (message, uuid) => {
-  const channel = await client.channels.fetch(process.env.CHANNEL_ID);
-  try {
-    messageQueue.push(uuid);
-    await channel.sendSlash(process.env.BOT_ID, "imagine", message);
-    console.log(messageQueue);
-    console.log("slash sent");
-    return uuid;
-  } catch (e) {
-    console.log("failed");
-    console.log(e);
-  }
+	const channel = await client.channels.fetch(process.env.CHANNEL_ID);
+	try {
+		await channel.sendSlash(process.env.BOT_ID, "imagine", message);
+		messageQueue.push(uuid);
+		console.log(messageQueue);
+		console.log("slash sent");
+		return uuid;
+	} catch (e) {
+		console.log("failed");
+		console.log(e);
+	}
 };
