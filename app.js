@@ -11,10 +11,10 @@ dotenv.config();
 const app = express()
 
 const corsOptions = {
-	origin: ["http://localhost:3000", "https://www.vectura.io/"],
-	  methods: ["GET", "POST", "PUT", "DELETE"],
-	  allowedHeaders: ["Content-Type", "Authorization"],
-	  credentials: false
+	origin: ["http://localhost:3000", "https://www.vectura.io"],
+	methods: ["GET", "POST", "PUT", "DELETE"],
+	allowedHeaders: ["Content-Type", "Authorization"],
+	credentials: false
 };
 app.use(cors(corsOptions));
 app.use(express.json());

@@ -44,6 +44,9 @@ client.on("messageCreate", async (message) => {
 		console.log("(fast) matched");
 	} catch (e) {
 		console.log("regex failed in match()");
+		if (process.env.PRODUCTION === "false"){
+			return;
+		}
 	}
 	try {
 		let regex = /\(relaxed\)/;
@@ -51,7 +54,9 @@ client.on("messageCreate", async (message) => {
 		console.log("(relaxed) matched");
 	} catch (e) {
 		console.log("regex failed in relaxed()");
-		return;
+		if (process.env.PRODUCTION == "true") {
+			return;
+		}
 	}
 
 	if (messageQueue.includes(uuid)) {
@@ -65,7 +70,7 @@ client.on("messageCreate", async (message) => {
 				return;
 			}
 			console.log("received image");
-			const client = await MongoClient.connect("mongodb+srv://lamsalneeraj:hellogorl123@cluster0.4z9qnao.mongodb.net/mydatabase?retryWrites=true&w=majority");
+			const client = await MongoClient.connect(process.env.DB_URL);
 			const database = client.db("mydatabase");
 			const bucket = new mongodb.GridFSBucket(database, {
 				bucketName: "imagesBucket",
