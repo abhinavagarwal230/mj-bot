@@ -52,7 +52,7 @@ export async function authUser(token) {
         withCredentials: true,
         headers: {
           Cookie: `token=${token}`,
-	Authorization: `Bearer ${token}`,
+          Authorization: `Bearer ${token}`,
         },
       }
     );
@@ -102,7 +102,6 @@ app.get("/query", async (req, res) => {
   console.log({ desc });
   let token = req?.headers?.authorization?.split(" ")[1];
   console.log({ token, uuid });
-  return;
   try {
     let user = {};
     if (token) {
