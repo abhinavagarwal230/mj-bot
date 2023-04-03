@@ -9,8 +9,6 @@ import crypto from "crypto";
 import MessageQueue from "./queue.js";
 import cookieParser from "cookie-parser";
 import axios from "axios";
-import jwt from "jsonwebtoken";
-import { CommandInteractionOptionResolver } from "discord.js-selfbot-v13";
 dotenv.config();
 (async () => {
   try {
@@ -101,8 +99,9 @@ app.get("/query", async (req, res) => {
     desc = `https://api.ishworart.com/media/${referenceImageUrl} ${desc}`;
   }
   console.log({ desc });
-  let token = req?.cookies?.token;
+  let token = req?.headers?.authorization.split(" ")[1];
   console.log({ token, uuid });
+  return;
   try {
     let user = {};
     if (token) {
@@ -151,12 +150,13 @@ app.get("/uv", async (req, res) => {
     const db = await MongoDB.getInstance().getDb();
     const usersCollection = await db.collection("users");
     const mjPostsCollection = await db.collection("mj-posts");
-    let token = req?.cookies?.token;
+    let token = req?.headers?.authorization?.split(" ")[1];
     let user = null;
     if (!token) {
       res.status(400).json({ message: "invalid request" });
     }
-    console.log({ token, task, uuid });
+    console.log({ token });
+    return;
     user = await authUser(token);
     console.log("user: ", user);
     if (user) {
