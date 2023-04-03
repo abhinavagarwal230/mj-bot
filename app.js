@@ -52,6 +52,7 @@ export async function authUser(token) {
         withCredentials: true,
         headers: {
           Cookie: `token=${token}`,
+	Authorization: `Bearer ${token}`,
         },
       }
     );
@@ -99,7 +100,7 @@ app.get("/query", async (req, res) => {
     desc = `https://api.ishworart.com/media/${referenceImageUrl} ${desc}`;
   }
   console.log({ desc });
-  let token = req?.headers?.authorization.split(" ")[1];
+  let token = req?.headers?.authorization?.split(" ")[1];
   console.log({ token, uuid });
   return;
   try {
@@ -156,7 +157,6 @@ app.get("/uv", async (req, res) => {
       res.status(400).json({ message: "invalid request" });
     }
     console.log({ token });
-    return;
     user = await authUser(token);
     console.log("user: ", user);
     if (user) {
