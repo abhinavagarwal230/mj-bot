@@ -3,10 +3,12 @@ import multer from "multer";
 import { GridFsStorage } from "multer-gridfs-storage";
 import dotenv from "dotenv";
 import crypto from "crypto";
+import { MongoAPIError } from "mongodb";
+import MongoDB from "./mongodb.js";
 dotenv.config();
 
 const storage = new GridFsStorage({
-  url: process.env.DB_URL,
+  db: MongoDB.getInstance().getDb(),
   options: { useNewUrlParser: true, useUnifiedTopology: true },
   file: async (req, file) => {
     const uuid = crypto.randomUUID();
