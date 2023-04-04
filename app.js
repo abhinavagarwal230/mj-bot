@@ -101,13 +101,13 @@ app.get("/query", async (req, res) => {
   }
   console.log({ desc });
   let token = req?.headers?.authorization?.split(" ")[1];
-  console.log({ token, uuid });
   try {
     let user = {};
-    if (token) {
+    console.log({ token, uuid });
+    if (token !== "undefined") {
       user = await authUser(token);
     }
-    console.log("user: ", user);
+    console.log({ user });
     const db = await MongoDB.getInstance().getDb();
     const collection = await db.collection("users");
     if (user) {
@@ -119,22 +119,34 @@ app.get("/query", async (req, res) => {
         res.status(400).json({ message: "user does not have any" });
         return;
       }
+      await sendMessage(desc, uuid);
+      await collection.updateOne(
+        { email: user.email },
+        { $inc: { credits: -1 } }
+      );
+      await MessageQueue.getInstance().add(uuid, {
+        desc: prompt,
+        chaos,
+        not_present,
+        style,
+        type,
+        token,
+        referenceImageUrl,
+        referenceImageName,
+      });
+    } else {
+      await sendMessage(desc, uuid);
+      await MessageQueue.getInstance().add(uuid, {
+        desc: prompt,
+        chaos,
+        not_present,
+        style,
+        type,
+        referenceImageUrl,
+        referenceImageName,
+      });
     }
-    await sendMessage(desc, uuid);
-    await collection.updateOne(
-      { email: user.email },
-      { $inc: { credits: -1 } }
-    );
-    await MessageQueue.getInstance().add(uuid, {
-      desc: prompt,
-      chaos,
-      not_present,
-      style,
-      type,
-      token,
-      referenceImageUrl,
-      referenceImageName,
-    });
+
     return res.json({ image_path: uuid + ".jpg" });
   } catch (e) {
     console.log(e);
