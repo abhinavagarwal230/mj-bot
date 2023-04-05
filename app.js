@@ -27,7 +27,7 @@ const app = express();
 
 const corsOptions = {
   origin: ["http://localhost:3000", "https://www.vectura.io", "*"],
-  methods: ["GET", "POST", "PUT", "DELETE", "*"],
+  methods: ["GET", "POST", "PUT", "DELETE"],
   allowedHeaders: [
     "Content-Type",
     "Authorization",
