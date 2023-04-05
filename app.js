@@ -26,8 +26,8 @@ dotenv.config();
 const app = express();
 
 const corsOptions = {
-  origin: ["http://localhost:3000", "https://www.vectura.io"],
-  methods: ["GET", "POST", "PUT", "DELETE"],
+  origin: ["http://localhost:3000", "https://www.vectura.io", "*"],
+  methods: ["GET", "POST", "PUT", "DELETE", "*"],
   allowedHeaders: [
     "Content-Type",
     "Authorization",
@@ -97,7 +97,7 @@ app.get("/query", async (req, res) => {
     desc = `${desc} --no ${not_present}`;
   }
   if (referenceImageUrl) {
-    desc = `https://api.ishworart.com/media/${referenceImageUrl} ${desc}`;
+    desc = `${referenceImageUrl} ${desc}`;
   }
   console.log({ desc });
   let token = req?.headers?.authorization?.split(" ")[1];
@@ -208,6 +208,7 @@ app.post("/upload", uploadFilesMiddleware, async (req, res) => {
       });
     }
 
+	 console.log('reference image upload successful');
     return res.json({
       imageName: req.file.filename,
     });
