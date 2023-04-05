@@ -188,6 +188,7 @@ client.on("messageCreate", async (message) => {
         console.log("uuid not found in queue");
       }
     }
+    const channel = await client.channels.fetch(process.env.CHANNEL_ID);
     MessageQueue.getInstance().remove(uuid);
     await channel.sendSlash(process.env.BOT_ID, "relax");
   }
