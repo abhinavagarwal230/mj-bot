@@ -180,7 +180,6 @@ client.on("messageCreate", async (message) => {
           const result = await collection.insertOne(doc);
           console.log(result);
           console.log(`${result.insertedCount} documents were inserted`);
-          MessageQueue.getInstance().remove(uuid);
         } catch (e) {
           console.log("something went wrong", e);
         }
@@ -188,8 +187,9 @@ client.on("messageCreate", async (message) => {
         console.log(MessageQueue.getInstance().getAll());
         console.log("uuid not found in queue");
       }
-      MessageQueue.getInstance().remove(uuid);
     }
+    MessageQueue.getInstance().remove(uuid);
+    await channel.sendSlash(process.env.BOT_ID, "relax");
   }
 });
 
@@ -216,12 +216,13 @@ export const sendUpscaleNVariation = async (message) => {
 
 export const sendMessage = async (message, uuid, referenceImageUrl) => {
   const channel = await client.channels.fetch(process.env.CHANNEL_ID);
+  console.log({ message, referenceImageUrl, uuid });
+  //   console.log(typeof referenceImageUrl);
   try {
-    if (!!referenceImageUrl) {
-      await channel.sendSlash(process.env.BOT_ID, "imagine", message);
-    } else {
-      await channel.sendSlash(process.env.BOT_ID, "fast", message);
+    if (referenceImageUrl) {
+      await channel.sendSlash(process.env.BOT_ID, "fast");
     }
+    await channel.sendSlash(process.env.BOT_ID, "imagine", message);
     console.log(MessageQueue.getInstance().getAll());
     console.log("slash sent");
     return uuid;

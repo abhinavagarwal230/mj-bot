@@ -119,7 +119,7 @@ app.get("/query", async (req, res) => {
         res.status(400).json({ message: "user does not have any" });
         return;
       }
-      await sendMessage(desc, uuid);
+      await sendMessage(desc, uuid, referenceImageUrl);
       await collection.updateOne(
         { email: user.email },
         { $inc: { credits: -1 } }
@@ -135,7 +135,7 @@ app.get("/query", async (req, res) => {
         referenceImageName,
       });
     } else {
-      await sendMessage(desc, uuid);
+      await sendMessage(desc, uuid, referenceImageUrl);
       await MessageQueue.getInstance().add(uuid, {
         desc: prompt,
         chaos,
@@ -208,7 +208,7 @@ app.post("/upload", uploadFilesMiddleware, async (req, res) => {
       });
     }
 
-	 console.log('reference image upload successful');
+    console.log("reference image upload successful");
     return res.json({
       imageName: req.file.filename,
     });
