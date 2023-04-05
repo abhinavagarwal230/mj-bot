@@ -105,26 +105,15 @@ client.on("messageCreate", async (message) => {
       );
       console.log("done");
     } else {
-      try {
-        let regex = /\(fast\)/;
-        match = message_content.match(regex)[0];
-        console.log("(fast) matched");
-      } catch (e) {
-        console.log("regex failed in match()");
-        if (process.env.PRODUCTION === "false") {
-          return;
-        }
+      let fast = /\(fast\)/;
+      let relaxed = /\(relaxed\)/;
+      let fastMatch = message_content.match(fast);
+      let relaxedMatch = message_content.match(relaxed);
+      if (!fastMatch && !relaxedMatch) {
+        console.log("unable to match fast or relaxed");
+        return;
       }
-      try {
-        let regex = /\(relaxed\)/;
-        match = message_content.match(regex)[0];
-        console.log("(relaxed) matched");
-      } catch (e) {
-        console.log("regex failed in relaxed()");
-        if (process.env.PRODUCTION == "true") {
-          return;
-        }
-      }
+      console.log("matched fast or relaxed");
 
       if (MessageQueue.getInstance().includes(uuid)) {
         const attachment = message.attachments.first();
