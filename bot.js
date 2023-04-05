@@ -214,10 +214,14 @@ export const sendUpscaleNVariation = async (message) => {
 //   }
 // }
 
-export const sendMessage = async (message, uuid) => {
+export const sendMessage = async (message, uuid, referenceImageUrl) => {
   const channel = await client.channels.fetch(process.env.CHANNEL_ID);
   try {
-    await channel.sendSlash(process.env.BOT_ID, "imagine", message);
+    if (!!referenceImageUrl) {
+      await channel.sendSlash(process.env.BOT_ID, "imagine", message);
+    } else {
+      await channel.sendSlash(process.env.BOT_ID, "fast", message);
+    }
     console.log(MessageQueue.getInstance().getAll());
     console.log("slash sent");
     return uuid;
