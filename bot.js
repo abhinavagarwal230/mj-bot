@@ -33,23 +33,31 @@ client.on("messageCreate", async (message) => {
         throw new Error("prompt does not exist");
       }
       console.log(prompt);
-      const messages = await message.channel.messages.fetch({ limit: 100 });
-      const keywordMessages = messages.find(
-        (m) =>
-          m.content === prompt.prompt && m.author.username === "Midjourney Bot"
-      );
-      if (keywordMessages.components.length > 0) {
-        // Loop through each ActionRow in the message's components
-        for (const actionRow of keywordMessages.components) {
-          // Loop through each Button in the ActionRow
-          for (const button of actionRow.components) {
-            if (button.label === task) {
-              console.log(button, keywordMessages.content);
-              keywordMessages.clickButton(button.customId);
-              return;
+      const lastMessageId = null;
+      for (let i = 0; i < 10; i++) {
+        const messages = await message.channel.messages.fetch({
+          limit: 100,
+          before: lastMessageId,
+        });
+        const keywordMessages = messages.find(
+          (m) =>
+            m.content === prompt.prompt &&
+            m.author.username === "Midjourney Bot"
+        );
+        if (keywordMessages.components.length > 0) {
+          // Loop through each ActionRow in the message's components
+          for (const actionRow of keywordMessages.components) {
+            // Loop through each Button in the ActionRow
+            for (const button of actionRow.components) {
+              if (button.label === task) {
+                console.log(button, keywordMessages.content);
+                keywordMessages.clickButton(button.customId);
+                return;
+              }
             }
           }
         }
+        lastMessageId = messages.last().id;
       }
     } catch (err) {
       console.log(err, "err");
