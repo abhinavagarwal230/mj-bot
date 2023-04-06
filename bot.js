@@ -44,7 +44,7 @@ client.on("messageCreate", async (message) => {
             m.content === prompt.prompt &&
             m.author.username === "Midjourney Bot"
         );
-        if (keywordMessages.components.length > 0) {
+        if (keywordMessages && keywordMessages.components.length > 0) {
           // Loop through each ActionRow in the message's components
           for (const actionRow of keywordMessages.components) {
             // Loop through each Button in the ActionRow
