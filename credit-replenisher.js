@@ -69,7 +69,7 @@ export async function scheduleCreditReplenish() {
   try {
     if (PRODUCTION === "true") {
       console.log("starting the cron job");
-      await cron.schedule("* * * * *", replenishCredits); // run the function at midnight each day
+      await cron.schedule("0 0 * * *", replenishCredits); // run the function at midnight each day
       console.log("successfully scheduled the cron job");
     } else if (PRODUCTION === "false") {
       console.log("can't start the cron job this is not production server");
