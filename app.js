@@ -9,6 +9,7 @@ import crypto from "crypto";
 import MessageQueue from "./queue.js";
 import cookieParser from "cookie-parser";
 import axios from "axios";
+import { scheduleCreditReplenish } from "./credit-replenisher.js";
 dotenv.config();
 (async () => {
   try {
@@ -43,6 +44,9 @@ app.use(express.urlencoded({ extended: true }));
 app.listen(process.env.PORT, () => {
   console.log(`listening on http://localhost:${process.env.PORT}`);
 });
+
+//this will add credit to each user each day
+scheduleCreditReplenish();
 
 export async function authUser(token) {
   try {
